@@ -30,9 +30,9 @@ contract Pool {
     // address decayAddress;
     // address capitalfactorAddress;
     // uint256 capitalFactor;
+
     uint256 POSmaxRatio;
     uint256 NEGmaxRatio;
-
     uint256 maxRatioDate;
 
     bool condition;
@@ -134,8 +134,9 @@ contract Pool {
         uint256 temp = (block.timestamp - startDate);
         uint256 discount = temp * decayFactor;
         uint256 amt = (msg.value)*(1e12 - discount);
+        uint256 final = amt/1e12;
         
-        positiveSide.mint(amt);
+        positiveSide.mint(final);
         positiveSide.safeTransfer(msg.sender,amt);
 
         numDepPos = numDepPos + msg.value;
@@ -154,10 +155,11 @@ contract Pool {
         uint256 temp = (block.timestamp - startDate);
         uint256 discount = temp * decayFactor;
         uint256 amt = (msg.value)*(1e12 - discount);
+        uint256 final = amt/1e12;
 
         // if temp = 86,400 1 day, then decay factor = 116,000 to decrease amt by 1% every day
         
-        negativeSide.mint(amt);
+        negativeSide.mint(final);
         negativeSide.safeTransfer(msg.sender,amt);
 
         numDepNeg = numDepNeg + msg.value;
