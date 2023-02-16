@@ -30,7 +30,9 @@ contract Pool {
     // address decayAddress;
     // address capitalfactorAddress;
     // uint256 capitalFactor;
-    uint256 maxRatio;
+    uint256 POSmaxRatio;
+    uint256 NEGmaxRatio;
+
     uint256 maxRatioDate;
 
     bool condition;
@@ -72,8 +74,9 @@ contract Pool {
     function getDiscount() public view returns (uint256){
         uint256 temp = (block.timestamp - startDate);
         uint256 discount = temp * decayFactor;
-        uint256 amt = (1e18 - discount);
-        return(amt);
+        uint256 amt = (1e12 - discount);
+        uint256 ret = (1000*amt)/1e12;
+        return(ret);
     }
     
     AggregatorV3Interface public oracle;
@@ -83,7 +86,8 @@ contract Pool {
         int256 _price, 
         uint256 _settlementDate,
         uint256 _decay, 
-        uint256 _maxRatio, 
+        uint256 _POSmaxRatio,
+        uint256 _NEGmaxRatio,
         uint256 _maxRatioDate,
         string memory name,
         string memory acronym,
@@ -96,7 +100,8 @@ contract Pool {
         price = _price;
         oracleAddress = _oracle;
         decayFactor = _decay;
-        maxRatio = _maxRatio;
+        POSmaxRatio = _POSmaxRatio;
+        NEGmaxRatio = _NEGmaxRatio;
         maxRatioDate = _maxRatioDate;
         turnToDustDate = _turnToDustDate;
 
@@ -128,7 +133,7 @@ contract Pool {
         
         uint256 temp = (block.timestamp - startDate);
         uint256 discount = temp * decayFactor;
-        uint256 amt = (msg.value)*(1e18 - discount);
+        uint256 amt = (msg.value)*(1e12 - discount);
         
         positiveSide.mint(amt);
         positiveSide.safeTransfer(msg.sender,amt);
@@ -148,7 +153,9 @@ contract Pool {
 
         uint256 temp = (block.timestamp - startDate);
         uint256 discount = temp * decayFactor;
-        uint256 amt = (msg.value)*(1e18 - discount);
+        uint256 amt = (msg.value)*(1e12 - discount);
+
+        // if temp = 86,400 1 day, then decay factor = 116,000 to decrease amt by 1% every day
         
         negativeSide.mint(amt);
         negativeSide.safeTransfer(msg.sender,amt);
@@ -198,8 +205,8 @@ contract Pool {
     function turnWithdrawOn() public {
         require(block.timestamp < maxRatioDate, "The Withdrawal Date has passed");
         require(PosAmtDeposited[msg.sender] > 0 ||  NegAmtDeposited[msg.sender] > 0, "You have not deposited any funds");
-        require((numDepPos/numDepNeg) > maxRatio, "The minimum ratio has not been met");
-        if((numDepPos/numDepNeg) > maxRatio){
+        require((1000*numDepPos/numDepNeg) > (1000*POSmaxRatio)/NEGmaxRatio, "The minimum ratio has not been met");
+        if((1000*numDepPos/numDepNeg) > (1000*POSmaxRatio)/NEGmaxRatio){
             withdraw = true;
             emit WithdrawChanged(withdraw);
         }
@@ -210,7 +217,7 @@ contract Pool {
         require(block.timestamp < maxRatioDate, "The Withdrawal Date has passed");
         require(positiveSide.balanceOf(msg.sender) > 0, "You have no tokens");
 
-        if((numDepPos - PosAmtDeposited[msg.sender])/(numDepNeg) > maxRatio){
+        if((1000*(numDepPos - PosAmtDeposited[msg.sender]))/(numDepNeg) > (1000*POSmaxRatio)/NEGmaxRatio){
             require(true == false, "You can't withdraw because it would increase the ratio above the max ratio");
         }
 
@@ -229,7 +236,7 @@ contract Pool {
         require(block.timestamp < maxRatioDate, "The Withdrawal Date has passed");
         require(negativeSide.balanceOf(msg.sender) > 0, "You have no tokens");
 
-        if((numDepPos)/(numDepNeg - NegAmtDeposited[msg.sender]) > maxRatio){
+        if(1000*((numDepPos)/(numDepNeg - NegAmtDeposited[msg.sender])) > (1000*POSmaxRatio)/NEGmaxRatio){
             require(true == false, "You can't withdraw because it would increase the ratio above the max ratio");
         }
 
@@ -260,7 +267,8 @@ contract deploy2 {
         int256 _price, 
         uint256 _settlementDate,
         uint256 decay,
-        uint256 maxRatio,
+        uint256 maxRatioPOS,
+        uint256 maxRatioNEG,
         uint256 maxRatioDate,
         string name,
         string acronym,
@@ -272,7 +280,8 @@ contract deploy2 {
         int256 price, 
         uint256 settlementDate,
         uint256 decay,
-        uint256 maxRatio,
+        uint256 maxRatioPOS,
+        uint256 maxRatioNEG,
         uint256 maxRatioDate,
         string memory name,
         string memory acronym, 
@@ -280,8 +289,8 @@ contract deploy2 {
     
             public returns (address newPool)
             {
-                newPool = address(new Pool(oracle,price,settlementDate,decay,maxRatio,maxRatioDate,name,acronym,turnToDustDate));
-                emit PoolCreated(oracle,price,settlementDate,decay,maxRatio,maxRatioDate,name,acronym,newPool, turnToDustDate);                
+                newPool = address(new Pool(oracle,price,settlementDate,decay,maxRatioPOS,maxRatioNEG,maxRatioDate,name,acronym,turnToDustDate));
+                emit PoolCreated(oracle,price,settlementDate,decay,maxRatioPOS,maxRatioNEG,maxRatioDate,name,acronym,newPool, turnToDustDate);                
                 return(newPool);
             }
 }
