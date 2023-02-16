@@ -1,0 +1,6 @@
+
+
+for MIN RATIO 
+
+ask user to input for 1.25 to be 1250
+

@@ -1,0 +1,12 @@
+
+
+Problem: for the MAX RATIO we can only do 2,3,4,5
+    ie only do 2 POS per 1 NEG, 4 POS per 1 NEG
+
+GOAL: Ability for MAX RATIO to be 1.25, 2.30, 3.75
+
+
+Problem: Decay calculations are unkown. 
+
+GOAL: what is the decay factor number the user inputs to hit 1% decay per day. 
+
