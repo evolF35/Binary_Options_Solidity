@@ -10,3 +10,8 @@ Problem: Decay calculations are unkown.
 
 GOAL: what is the decay factor number the user inputs to hit 1% decay per day. 
 
+
+
+Problem: Its all or nothing withdrawals. 
+
+    Goal: make withdrawals be able to take a little off the table.

@@ -128,7 +128,7 @@ contract Pool {
     }
 
     function depositToPOS() public payable {
-        require(block.timestamp < settlementDate);
+        require(block.timestamp < settlementDate, "Current time is after settlement date");
         require(msg.value > 0.001 ether, "Too little ETH deposited");
         
         uint256 temp = (block.timestamp - startDate);
@@ -145,7 +145,7 @@ contract Pool {
     }
 
     function depositToNEG() public payable {
-        require(block.timestamp < settlementDate);
+        require(block.timestamp < settlementDate, "Current time is after settlement date");
         require(msg.value > 0.001 ether, "Too little ETH deposited");
         
         negativeSide.mint(msg.value);
@@ -226,9 +226,10 @@ contract Pool {
         uint256 placeholder = PosAmtDeposited[msg.sender];
         PosAmtDeposited[msg.sender] = 0;
         numDepPos = numDepPos - placeholder;
-        emit DepNumPosChanged(numDepPos);
 
         (payable(msg.sender)).transfer(placeholder);
+        emit DepNumPosChanged(numDepPos);
+
     }
 
     function withdrawWithNEG() public {
@@ -245,9 +246,10 @@ contract Pool {
         uint256 placeholder = NegAmtDeposited[msg.sender];
         NegAmtDeposited[msg.sender] = 0;
         numDepNeg = numDepNeg - placeholder;
-        emit DepNumNegChanged(numDepNeg);
 
         (payable(msg.sender)).transfer(placeholder);
+        emit DepNumNegChanged(numDepNeg);
+
     }
 
     function turnToDust() public {
