@@ -4,7 +4,7 @@ require("@nomiclabs/hardhat-web3");
 
 async function main() {
 
-    const Lock = await hre.ethers.getContractFactory("deploy9");
+    const Lock = await hre.ethers.getContractFactory("deploy1776");
     const lock = await Lock.deploy();    
 
     await lock.deployed();

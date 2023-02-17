@@ -308,7 +308,7 @@ contract deploy1776 {
         string memory acronym, 
         uint256 turnToDustDate
         ) 
-    
+
             public returns (address newPool)
             {
                 newPool = address(new Pool(oracle,price,settlementDate,decay,maxRatioPOS,maxRatioNEG,maxRatioDate,name,acronym,turnToDustDate,address(this)));
@@ -319,7 +319,6 @@ contract deploy1776 {
                 emit PoolCreated(oracle,price,settlementDate,decay,maxRatioPOS,maxRatioNEG,maxRatioDate,name,acronym,newPool, turnToDustDate, address(this));                
                 return(newPool);
             }
-
 
         function removePool(address pool) public {
             require(poolExists[pool] == true, "Pool does not exist");
