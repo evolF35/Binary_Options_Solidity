@@ -115,7 +115,7 @@ contract Pool {
         string memory Nacr = "NEG";
         string memory NAC = string(bytes.concat(bytes(acronym), "-", bytes(Nacr)));
 
-        deployerClaim claimDeployer = deployerClaim(0x10328D18901bE2278f8105D9ED8a2DbdE08e709f);
+        deployerClaim claimDeployer = deployerClaim(0x2B2f2591DffDF260f43FDE8bC596A3e11814443e);
 
         positiveSide = claimDeployer.deployClaim(Over, PAC, address(this));
         negativeSide = claimDeployer.deployClaim(Under, NAC, address(this));
