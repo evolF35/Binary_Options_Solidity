@@ -136,12 +136,11 @@ contract Pool {
         uint256 amt = (msg.value)*(1e12 - discount);
         uint256 tots = amt/1e12; 
 
+        numDepPos = numDepPos + msg.value;
+        PosAmtDeposited[msg.sender] = PosAmtDeposited[msg.sender] + msg.value;
 
         positiveSide.mint(tots);
         positiveSide.safeTransfer(msg.sender,amt);
-
-        numDepPos = numDepPos + msg.value;
-        PosAmtDeposited[msg.sender] = PosAmtDeposited[msg.sender] + msg.value;
 
         emit DepNumPosChanged(numDepPos);
     }
@@ -160,11 +159,11 @@ contract Pool {
 
         // if temp = 86,400 1 day, then decay factor = 116,000 to decrease amt by 1% every day
         
-        negativeSide.mint(tots);
-        negativeSide.safeTransfer(msg.sender,amt);
-
         numDepNeg = numDepNeg + msg.value;
         NegAmtDeposited[msg.sender] = NegAmtDeposited[msg.sender] + msg.value;
+
+        negativeSide.mint(tots);
+        negativeSide.safeTransfer(msg.sender,amt);
 
         emit DepNumNegChanged(numDepNeg);
     }
