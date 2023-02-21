@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
 
 interface Claim is IERC20 {    
     function mint(uint256 amount) external;
@@ -20,7 +22,7 @@ interface deployerPool {
         function removePool(address pool) external;        
 }
 
-contract Pool {
+contract Pool is ReentrancyGuard{
     using SafeERC20 for Claim;
 
     uint256 startDate;
@@ -190,7 +192,7 @@ contract Pool {
         emit pastSettlementDateChanged(true);
     }
 
-    function redeemWithPOS() public { 
+    function redeemWithPOS() public nonReentrant{ 
         require(block.timestamp > settlementDate, "Current time is before settlement date");
         require(condition == true,"The POS side did not win");
         require(positiveSide.balanceOf(msg.sender) > 0, "You have no tokens");
@@ -202,7 +204,7 @@ contract Pool {
         (payable(msg.sender)).transfer(saved);
     }
 
-    function redeemWithNEG() public {
+    function redeemWithNEG() public nonReentrant {
         require(block.timestamp > settlementDate, "Current time is before settlement date");
         require(condition == false,"The NEG side did not win");
         require(negativeSide.balanceOf(msg.sender) > 0, "You have no tokens");
@@ -224,7 +226,7 @@ contract Pool {
         }
     }
 
-    function withdrawWithPOS() public {
+    function withdrawWithPOS() public nonReentrant{
         require(withdraw == true,"Withdrawals have not been turned on");
         require(block.timestamp < maxRatioDate, "The Withdrawal Date has passed");
         require(positiveSide.balanceOf(msg.sender) > 0, "You have no tokens");
@@ -243,7 +245,7 @@ contract Pool {
         emit DepNumPosChanged(numDepPos);
     }
 
-    function withdrawWithNEG() public {
+    function withdrawWithNEG() public nonReentrant{
         require(withdraw == true,"Withdrawals have not been turned on");
         require(block.timestamp < maxRatioDate, "The Withdrawal Date has passed");
         require(negativeSide.balanceOf(msg.sender) > 0, "You have no tokens");
