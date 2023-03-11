@@ -324,6 +324,7 @@ contract deploy1776 {
 
         function removePool(address pool) public {
             require(poolExists[pool] == true, "Pool does not exist");
+            require(msg.sender == pool, "Only pool itself can remove itself");
             poolExists[pool] = false;
             bytes32 poolHash = keccak256(abi.encodePacked(pool));
             poolAddresses[poolHash] = address(0);
