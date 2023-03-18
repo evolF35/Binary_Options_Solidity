@@ -24,7 +24,7 @@ const optimismGoerliUrl =
     apiKey: {
       mainnet: `${process.env.ETHERSCAN_API_KEY}`,
       goerli: `${process.env.ETHERSCAN_API_KEY}`,
-      optimisticGoerli: `${process.env.OPTIMISM_API_KEY}`,
+      optimisticGoerli: `${process.env.OPTIMISM_API_KEYs}`,
   }
   },
   networks: {
