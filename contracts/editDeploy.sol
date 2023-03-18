@@ -42,6 +42,7 @@ contract Pool is ReentrancyGuard{
 
     bool condition;
     bool withdraw;
+    bool settled = false;
 
     uint256 turnToDustDate;
 
@@ -182,6 +183,7 @@ contract Pool is ReentrancyGuard{
 
     function settle() public {
         require(block.timestamp > settlementDate, "Current time is before settlement date");
+        require(settled == false, "Contract has already been settled");
 
         (,int256 resultPrice,,,) = oracle.latestRoundData();
 
@@ -189,6 +191,7 @@ contract Pool is ReentrancyGuard{
             condition = true;
             emit ConditionChanged(condition);
         }
+        settled = true;
         emit pastSettlementDateChanged(true);
     }
 
