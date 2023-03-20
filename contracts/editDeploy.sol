@@ -127,6 +127,7 @@ contract Pool is ReentrancyGuard{
         string memory NAC = string(bytes.concat(bytes(acronym), "-", bytes(Nacr)));
 
         deployerClaim claimDeployer = deployerClaim(0x2B2f2591DffDF260f43FDE8bC596A3e11814443e);
+        //0xdDD8CA978533443a045fC332C2c19Cc7122B07dc -- optimism goerli
 
         positiveSide = claimDeployer.deployClaim(Over, PAC, address(this));
         negativeSide = claimDeployer.deployClaim(Under, NAC, address(this));
